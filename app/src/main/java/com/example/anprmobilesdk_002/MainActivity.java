@@ -16,13 +16,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
 
 	private Context context = this;
-	private Activity activity = this;
 	private ANPR sdkAnpr;
 	private CameraInput cameraInput;
 	private boolean inited = false;
@@ -158,7 +156,7 @@ public class MainActivity extends Activity {
 				case CameraInput.EventListener.EVENT_TYPE_CAMERA_PARAMETERS:		// camera initialized with this android camera parameters
 					Camera.Parameters parameters = (Camera.Parameters)event.object;
 					Size size = parameters.getPreviewSize();	// Log camera resolution
-					Log.i("Camera parameter", String.valueOf(size.width) + "X" + String.valueOf(size.height));
+					Log.i("Camera parameter", size.width + "X" + size.height);
 
 //					List<String> supportedScenes = parameters.getSupportedSceneModes();	// change cmaera scene mode for example
 //					parameters.setSceneMode(supportedScenes.get(0));
@@ -173,7 +171,7 @@ public class MainActivity extends Activity {
 				case CameraInput.EventListener.EVENT_TYPE_CAMERA_ZOOM:		// when zoom changed
 					int value = (Integer)event.object;	// current zoom value
 					boolean finished = (Boolean)event.object2;	// zooming process finished
-					Log.i("Camera zoom", String.valueOf(value) + " - " + String.valueOf(finished));	// Log them
+					Log.i("Camera zoom", value + " - " + finished);	// Log them
 					break;
 
 				case CameraInput.EventListener.EVENT_TYPE_CAMERA_PLATE_FOUND:	// when found licence plate
