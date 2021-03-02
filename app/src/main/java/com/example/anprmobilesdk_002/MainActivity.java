@@ -2,12 +2,8 @@ package com.example.anprmobilesdk_002;
 
 import java.util.List;
 
-import com.anprsystemsltd.sdk.mobile.ANPR;
-import com.anprsystemsltd.sdk.mobile.CameraInput;
-import com.anprsystemsltd.sdk.mobile.Event;
-import com.anprsystemsltd.sdk.mobile.Result;
-import com.anprsystemsltd.sdk.mobile.Tools;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
@@ -16,6 +12,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.anpr.sdk.mobile.ANPR;
+import com.anpr.sdk.mobile.CameraInput;
+import com.anpr.sdk.mobile.Event;
+import com.anpr.sdk.mobile.Result;
+import com.anpr.sdk.mobile.Tools;
 
 public class MainActivity extends Activity {
 
@@ -30,14 +33,16 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Tools.checkPermissions(this, new String[] {android.Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA});
+
 		sdkAnpr = new ANPR(context, sdkEventListener);
 
 		ANPR.Parameters paramsSdk = new ANPR.Parameters();
 		paramsSdk.licenseMode = ANPR.Parameters.LICENSE_MODE_ONLINE;
 //        parameters.licenseMode = ANPR.Parameters.LICENSE_MODE_OFFLINE;	// SDK is licenced for dedicated device
 
-		paramsSdk.requestNationality = "IND"; // at first run SDK will download the Indian ANPR native library into device file system (in background)
-//        parameters.requestLoadFromSd = "/storage/sdcard0/PRB_Probe.so";	// at first run SDK will load the ANPR native library from SD card
+		paramsSdk.requestNationality = "FIN"; // at first run SDK will download the Indian ANPR native library into device file system (in background)
+//		paramsSdk.requestLoadFromAssets = "PRB_Probe.so";	// at first run SDK will load the ANPR native library from assets folder
 
 		sdkAnpr.init(paramsSdk);	// init SDK
 									// after end of initialization process eventListener will handle an event
@@ -64,14 +69,7 @@ public class MainActivity extends Activity {
 						setTitle("ANPR_SDK ver:" + sdkAnpr.getVersion() + " - " + sdkAnpr.getUsedLibraryName() + " ID:" + sdkAnpr.getDeviceId());
 						startCamera();	// start camera
 					} else {	// if initializing not successfull
-						Handler handler = new Handler()
-						{
-							public void handleMessage(Message mes)
-							{
-								finish();	// exit
-							}
-						};
-						Tools.ShowMessageDialog(context, event.result.errorMessage, event.result.data, handler);	// show error
+						Toast.makeText(context, event.result.errorMessage + " " + event.result.data, Toast.LENGTH_LONG).show();
 					}
 					break;
 			}
@@ -138,12 +136,12 @@ public class MainActivity extends Activity {
 			}
 			else
 			{
-				exitWithError(result.errorMessage, result.data);
+				error(result.errorMessage, result.data);
 			}
 		}
 		else
 		{
-			exitWithError(cameraInputParameters.result.errorMessage, cameraInputParameters.result.data);
+			error(cameraInputParameters.result.errorMessage, cameraInputParameters.result.data);
 		}
 
 	}
@@ -211,16 +209,9 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private void exitWithError(String aTitle, String aMessage)
+	private void error(String aTitle, String aMessage)
 	{
-		Handler handler = new Handler()
-		{
-			public void handleMessage(Message mes)
-			{
-				finish();	// exit
-			}
-		};
-		Tools.ShowMessageDialog(context, aTitle, aMessage, handler);	// show error
+		Tools.ShowMessageDialog(context, aTitle, aMessage, null);	// show error
 	}
 
 	protected void onDestroy()
