@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
 		paramsSdk.licenseMode = ANPR.Parameters.LICENSE_MODE_ONLINE;
 //        parameters.licenseMode = ANPR.Parameters.LICENSE_MODE_OFFLINE;	// SDK is licenced for dedicated device
 
-		paramsSdk.requestNationality = "FIN"; // at first run SDK will download the Indian ANPR native library into device file system (in background)
+		paramsSdk.requestNationality = "HUN"; // at first run SDK will download the Indian ANPR native library into device file system (in background)
 //		paramsSdk.requestLoadFromAssets = "PRB_Probe.so";	// at first run SDK will load the ANPR native library from assets folder
 
 		sdkAnpr.init(paramsSdk);	// init SDK
